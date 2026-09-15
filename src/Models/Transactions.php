@@ -74,23 +74,19 @@ class Transactions
     public function deleteTransaction($id, $userId)
     {
 
-        try {
-            $stmt = $this->pdo->prepare(
-                "DELETE transactions
+        $stmt = $this->pdo->prepare(
+            "DELETE transactions
                 FROM transactions
                 JOIN categories
                     ON transactions.category_id = categories.id
                 WHERE transactions.id= :id
                     AND categories.user_id = :user_id"
 
-            );
-            $stmt->execute([
-                'id' => $id,
-                'user_id' => $userId,
-            ]);
-            return $stmt->rowCount() > 0;
-        } catch (PDOException $e) {
-            return false;
-        }
+        );
+        $stmt->execute([
+            'id' => $id,
+            'user_id' => $userId,
+        ]);
+        return $stmt->rowCount() > 0;
     }
 }
