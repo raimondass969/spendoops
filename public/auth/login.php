@@ -2,6 +2,7 @@
 
 use App\Services\Csrf;
 use App\Models\User;
+use PDOException;
 
 $pdo = require_once __DIR__ . '/../../bootstrap.php';
 
@@ -21,12 +22,17 @@ $password = $_POST['password'];
 
 
 $user = new User($pdo);
-$confirmedUser = $user->userLogin($email, $password);
+try {
+    $confirmedUser = $user->userLogin($email, $password);
+} catch (PDOException) {
+    http_response_code(500);
+    exit("Prisijungimas nepavyko");
+}
 
 if (!$confirmedUser) {
-    echo "Prisijungimas nepavyko";
-    return false;
+    exit("Neteisingas el. pastas arba slaptazodis");
 }
+
 
 $_SESSION['logged_in'] = true;
 $_SESSION['email'] = $email;

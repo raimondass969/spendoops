@@ -12,12 +12,14 @@ $token = Csrf::generateToken();
 $userId = $_SESSION['user_id'];
 
 $transactionsList = new Transactions($pdo);
-$transactions = $transactionsList->getAllTransactions($userId);
-
-if ($transactions === false) {
-    echo "Klaida gaunant transakcijas";
+try {
+    $transactions = $transactionsList->getAllTransactions($userId);
+} catch (PDOException) {
+    http_response_code(500);
+    echo 'Nepavyko gauti transakcijų.';
     exit();
 }
+
 ?>
 
 
