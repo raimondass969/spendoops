@@ -3,36 +3,31 @@
 namespace App\Models;
 
 use PDO;
-use PDOException;
 
 class User
 {
-    private $pdo;
+    private PDO $pdo;
 
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
 
-    public function userRegister($email, $username, $password)
+    public function userRegister(string $email, string $username, string $password): int
     {
         $hash_password = password_hash($password, PASSWORD_DEFAULT);
 
-        try {
-            $stmt = $this->pdo->prepare("INSERT INTO users(email,username,hash_password) VALUES (:email, :username, :hash_password)");
+        $stmt = $this->pdo->prepare("INSERT INTO users(email,username,hash_password) VALUES (:email, :username, :hash_password)");
 
-            $stmt->execute([
-                'email' => $email,
-                'username' => $username,
-                'hash_password' => $hash_password
-            ]);
-            return $this->pdo->lastInsertId();
-        } catch (PDOException $e) {
-            return false;
-        }
+        $stmt->execute([
+            'email' => $email,
+            'username' => $username,
+            'hash_password' => $hash_password
+        ]);
+        return (int) $this->pdo->lastInsertId();
     }
 
-    public function userLogin($email, $password)
+    public function userLogin(string $email, string $password): array|false
     {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->execute([
@@ -51,7 +46,7 @@ class User
         return $user;
     }
 
-    public function isEmailTaken($email)
+    public function isEmailTaken(string $email): bool
     {
         $stmt = $this->pdo->prepare("SELECT email FROM users WHERE email = :email");
         $stmt->execute([

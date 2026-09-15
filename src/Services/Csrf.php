@@ -4,7 +4,7 @@ namespace App\Services;
 
 class Csrf
 {
-    public static function generateToken()
+    public static function generateToken(): string
     {
 
         if (isset($_SESSION['csrf_token'])) {

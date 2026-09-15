@@ -3,6 +3,8 @@
 use App\Models\Transactions;
 use App\Services\Csrf;
 
+
+const ADD_TRANSACTION_FORM = 'Location: add-transaction-form.php';
 $pdo = require_once __DIR__ . '/../../bootstrap.php';
 
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
@@ -23,11 +25,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $transaction = new Transactions($pdo);
-    $transactionInfo = $transaction->addTransaction($transaction_type, $amount, $description, $categoryId, $userId);
-
-    if (!isset($transactionInfo) || !$transactionInfo) {
-        $_SESSION['error_message'] = 'Nepavyko prideti transakcijos!';
+    try {
+        $transactionInfo = $transaction->addTransaction($transaction_type, $amount, $description, $categoryId, $userId);
+    } catch (PDOException $e) {
+        $_SESSION['error_message'] = 'duomenų bazės klaida';
         header('Location: add-transaction-form.php');
+        exit();
+    } catch (InvalidArgumentException $e) {
+        $_SESSION['error_message'] = $e->getMessage();
+        header(ADD_TRANSACTION_FORM);
+        exit();
+    }
+    if (!$transactionInfo) {
+        $_SESSION['error_message'] = 'Kategorija nerasta arba nepriklauso vartotojui.';
+        header(ADD_TRANSACTION_FORM);
         exit();
     } else {
         $_SESSION['success_message'] = 'Transakcija sekmingai prideta!';

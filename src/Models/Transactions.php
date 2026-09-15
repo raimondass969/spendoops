@@ -4,56 +4,54 @@ namespace App\Models;
 
 use PDO;
 use InvalidArgumentException;
-use PDOException;
 
 class Transactions
 {
 
-    private $pdo;
+    private PDO $pdo;
 
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
 
-    public function addTransaction($transaction_type, $amount, $description, $categoryId, $userId)
+    public function addTransaction(string $transaction_type, string $amount, string $description, int $categoryId, int $userId): bool
     {
+
+        if (!is_numeric($amount)) {
+            throw new InvalidArgumentException("Negalima reiksme");
+        }
 
         if (!in_array($transaction_type, ['INCOME', 'EXPENSE'])) {
             throw new InvalidArgumentException('Galimos reiksmes INCOME arba EXPENSE ');
         }
 
-        try {
-            $stmt = $this->pdo->prepare('SELECT id FROM Categories WHERE id= :category_id AND user_id= :user_id');
 
-            $stmt->execute([
-                'category_id' => $categoryId,
-                'user_id' => $userId
-            ]);
+        $stmt = $this->pdo->prepare('SELECT id FROM Categories WHERE id= :category_id AND user_id= :user_id');
 
-            $category = $stmt->fetch();
-            if (!$category) {
-                return false;
-            }
+        $stmt->execute([
+            'category_id' => $categoryId,
+            'user_id' => $userId
+        ]);
 
-            $stmt = $this->pdo->prepare('INSERT INTO transactions(transaction_type,amount,description, category_id) VALUES (:transaction_type, :amount, :description, :category_id)');
-
-            $stmt->execute([
-                'transaction_type' => $transaction_type,
-                'amount' => $amount,
-                'description' => $description,
-                'category_id' => $categoryId,
-            ]);
-            return true;
-        } catch (PDOException $e) {
-            return $e->getMessage();
+        $category = $stmt->fetch();
+        if (!$category) {
+            return false;
         }
-    }
-    public function getAllTransactions($userId)
-    {
 
-        try {
-            $stmt = $this->pdo->prepare("SELECT
+        $stmt = $this->pdo->prepare('INSERT INTO transactions(transaction_type,amount,description, category_id) VALUES (:transaction_type, :amount, :description, :category_id)');
+
+        $stmt->execute([
+            'transaction_type' => $transaction_type,
+            'amount' => $amount,
+            'description' => $description,
+            'category_id' => $categoryId,
+        ]);
+        return true;
+    }
+    public function getAllTransactions(int $userId): array
+    {
+        $stmt = $this->pdo->prepare("SELECT
                                         transactions.id AS transaction_id,
                                         transactions.amount,
                                         transactions.transaction_type,
@@ -62,16 +60,13 @@ class Transactions
                                      FROM transactions
                                      JOIN categories ON transactions.category_id = categories.id
                                      WHERE categories.user_id = :user_id");
-            $stmt->execute([
-                'user_id' => $userId
-            ]);
-            return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            return false;
-        }
+        $stmt->execute([
+            'user_id' => $userId
+        ]);
+        return $stmt->fetchAll();
     }
 
-    public function deleteTransaction($id, $userId)
+    public function deleteTransaction(int $id, int $userId): bool
     {
 
         $stmt = $this->pdo->prepare(

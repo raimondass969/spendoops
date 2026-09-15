@@ -13,7 +13,12 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 $token = Csrf::generateToken();
 
 $category = new Category($pdo);
-$userCategories = $category->getCategoriesForUser($_SESSION['user_id']);
+try {
+    $userCategories = $category->getCategoriesForUser($_SESSION['user_id']);
+} catch (PDOException $e) {
+    $_SESSION['error_message'] = 'duomenų bazės klaida';
+    $userCategories = [];
+}
 ?>
 
 <!DOCTYPE html>
