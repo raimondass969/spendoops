@@ -15,7 +15,7 @@ class Csrf
         return $token;
     }
 
-    public static function validateToken($token)
+    public static function validateToken(string $token): bool
     {
         if (!isset($_SESSION['csrf_token'])) {
             return false;

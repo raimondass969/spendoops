@@ -1,5 +1,12 @@
 function deleteTransaction(id){
-    fetch('delete.php?id=' + id)
+    const token = document.querySelector('input[name="csrf_token"]').value;
+    fetch(`delete.php?id=${id}`, {
+        method:'DELETE',
+        headers:{
+            'CSRF-TOKEN': token ,
+        }
+    
+    })
         .then(response => response.json())
         .then(data => {
         if(data.success){

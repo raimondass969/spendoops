@@ -1,14 +1,14 @@
 <?php
 
 use App\Models\Transactions;
+use App\Services\Csrf;
 
 $pdo = require_once __DIR__ . '/../../bootstrap.php';
-
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header('Location: ../auth/login-form.php');
     exit();
 }
-
+$token = Csrf::generateToken();
 $userId = $_SESSION['user_id'];
 
 $transactionsList = new Transactions($pdo);
@@ -57,6 +57,7 @@ if ($transactions === false) {
 
     <main class="max-w-5xl mx-auto w-full bg-white rounded-xl shadow-lg px-2 py-4 mt-2 flex flex-col gap-2">
         <h1>Transakcijos</h1>
+        <input type="hidden" name="csrf_token" value="<?php echo $token ?>">
         <?php if (empty($transactions)): ?>
             <p>Transakcijų kol kas nėra</p>
         <?php else: ?>
