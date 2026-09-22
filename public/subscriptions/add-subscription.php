@@ -1,17 +1,14 @@
 <?php
 
 use App\Controllers\SubscriptionController;
+use App\Services\Auth;
 use App\Services\Csrf;
 
 const ADD_SUB_FORM = 'Location: add-subscription-form.php';
 
 $pdo = require_once __DIR__ . '/../../bootstrap.php';
 
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || !isset($_SESSION['user_id'])) {
-    $_SESSION['error_message'] = 'Not logged in.';
-    Header('Location: ../auth/login-form.php');
-    exit();
-}
+Auth::requireLogin();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     Header(ADD_SUB_FORM);
@@ -23,7 +20,7 @@ if (!isset(
     $_POST['subscription_price'],
     $_POST['subscription_billing_cycle'],
     $_POST['subscription_next_payment_date'],
-    $_POST['CSRF_TOKEN'],
+    $_POST['csrf_token'],
 )) {
     $_SESSION['error_message'] = 'Missing required data.';
     header(ADD_SUB_FORM);
@@ -34,7 +31,7 @@ $subscriptionName = $_POST['subscription_name'];
 $subscriptionPrice = $_POST['subscription_price'];
 $subscriptionBillingCycle = $_POST['subscription_billing_cycle'];
 $subscriptionNextPaymentDate = $_POST['subscription_next_payment_date'];
-$token = $_POST['CSRF_TOKEN'];
+$token = $_POST['csrf_token'];
 $userId = $_SESSION['user_id'];
 
 if (!Csrf::validateToken($token)) {

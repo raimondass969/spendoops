@@ -1,16 +1,14 @@
 <?php
 
 use App\Controllers\TransactionController;
+use App\Services\Auth;
 use App\Services\Csrf;
 
 $pdo = require_once __DIR__ . '/../../bootstrap.php';
 
 header('Content-type: application/json');
-if (!isset($_SESSION['logged_in']) ||  $_SESSION['logged_in'] !== true) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Neprisijunges']);
-    exit();
-}
+
+Auth::requireLogin();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
     http_response_code(405);

@@ -1,9 +1,12 @@
 <?php
 
+use App\Services\Auth;
 use App\Services\Csrf;
 
 $pdo = require_once __DIR__ . '/../../bootstrap.php';
 $token = Csrf::generateToken();
+
+Auth::requireLogin();
 
 if (isset($_SESSION['success_message'])) {
     $successMessage = htmlspecialchars($_SESSION['success_message']);
@@ -28,7 +31,7 @@ if (isset($_SESSION['error_message'])) {
 <body>
 
     <form method="POST" action="add-subscription.php">
-        <input type="hidden" value="<?php echo $token ?>" name="CSRF_TOKEN">
+        <input type="hidden" value="<?php echo $token ?>" name="csrf_token">
         <div>
             <label for="subscription_name">Iveskite subsciption pavadinima</label>
             <input id="subscription_name" name="subscription_name" type="text">
