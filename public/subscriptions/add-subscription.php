@@ -54,5 +54,5 @@ try {
 }
 
 $_SESSION['success_message'] = "Prenumeratas sukurtas sekmingai.";
-header(ADD_SUB_FORM);
+header("location: subscription-list.php");
 exit();

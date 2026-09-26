@@ -22,6 +22,7 @@ $token = Csrf::generateToken();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendOops subscriptions</title>
+    <link rel="stylesheet" href="/css/output.css">
 
 </head>
 
@@ -37,10 +38,15 @@ $token = Csrf::generateToken();
         <?php unset($_SESSION['success_message']); ?>
     <?php endif; ?>
 
-    <h1>Subscriptions</h1>
+    <main class="flex flex-1 w-full justify-between items-center px-4 py-6">
+        <div>Subscriptions</div>
+        <a class="" href="add-subscription-form.php">+ Add new subscription</a>
+    </main>
 
     <?php if (empty($userSubscriptions)): ?>
-        <p>No subscriptions found.</p>
+        <h1>You don't have any subscriptions yet.</h1>
+        <p>Track your recurring payments and keep an eye on upcoming charges.</p>
+        <a class="" href="add-subscription-form.php">+ Add new subscription</a>
     <?php else: ?>
 
         <ul>
@@ -60,7 +66,8 @@ $token = Csrf::generateToken();
                         -
                         <?php if ((int)$subscription['is_active'] === 1): ?>
                             Active
-                            <button type="submit" name='action' value='0'>Padaryti neaktyvia prenumerata.</button>
+                            <button class="bg-violet-600 text-black px-3 py-2 rounded-md hover:bg-violet-700"
+                                type="submit" name='action' value='0'>Padaryti neaktyvia prenumerata.</button>
                         <?php else: ?>
                             Inactive
                             <button type="submit" name="action" value="1">Aktyvuoti prenumerata.</button>
