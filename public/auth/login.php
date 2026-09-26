@@ -2,7 +2,7 @@
 
 use App\Services\Csrf;
 use App\Models\User;
-use PDOException;
+
 
 $pdo = require_once __DIR__ . '/../../bootstrap.php';
 
@@ -33,6 +33,7 @@ if (!$confirmedUser) {
     exit("Neteisingas el. pastas arba slaptazodis");
 }
 
+session_regenerate_id(true);
 
 $_SESSION['logged_in'] = true;
 $_SESSION['email'] = $email;
