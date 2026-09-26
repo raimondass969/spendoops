@@ -26,6 +26,7 @@ if (isset($_SESSION['error_message'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscription</title>
+    <link rel="stylesheet" href="/css/output.css">
 </head>
 
 <body>
@@ -61,6 +62,7 @@ if (isset($_SESSION['error_message'])) {
     <?php if (isset($errorMessage)): ?>
         <p><?= $errorMessage ?></p>
     <?php endif; ?>
+
 </body>
 
 </html>

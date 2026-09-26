@@ -50,6 +50,8 @@ try {
         </div>
         <div class="flex gap-4 items-center">
             <a class="bg-violet-500 text-white rounded-xl shadow-2xs px-4 py-2"
+                href="../subscriptions/subscription-list.php">Prenumeratai</a>
+            <a class="bg-violet-500 text-white rounded-xl shadow-2xs px-4 py-2"
                 href="add-transaction-form.php">Pridėti transakcija</a>
             <a href="../auth/logout.php"> Atsijungti</a>
         </div>
